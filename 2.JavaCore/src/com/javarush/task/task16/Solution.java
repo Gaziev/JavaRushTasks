@@ -1,52 +1,37 @@
-package com.javarush.task.task16.task1622;
+package com.javarush.task.task16.task1624;
 
-/*
+/* 
 Последовательные выполнения нитей
 */
 
 public class Solution {
-    public volatile static int COUNT = 4;
+    public static MyThread t = new MyThread();
+    static String message = "inside main ";
 
-    public static void main(String[] args) throws InterruptedException {
-        for (int i = 0; i < COUNT; i++) {
-            SleepingThread  st = new SleepingThread();
-            try {
-                st.join();
-            }catch (InterruptedException e) {}
-
-
-
+    public static void main(String a[]) throws Exception {
+        t.start();
+        t.join();
+        for (int i = 0; i < 10; i++) {
+            System.out.println(message + i);
+            sleep();
         }
     }
 
-    public static class SleepingThread extends Thread {
-        private static volatile int threadCount = 0;
-        private volatile int countDownIndex = COUNT;
-
-        public SleepingThread() {
-            super(String.valueOf(++threadCount));
-            start();
+    public static void sleep() {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
         }
+    }
+
+    static class MyThread extends Thread {
+        String message = "inside MyThread ";
 
         public void run() {
-            while (true) {
-                System.out.println(this);
-                if (--countDownIndex == 0) return;
-                try {
-                    Thread.sleep(10);//напишите тут ваш код
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-
-                    System.out.println("Нить прервана");
-                }
+            for (int i = 0; i < 10; i++) {
+                System.out.println(message + i);
+                Solution.sleep();
             }
-
-        }
-
-        public String toString() {
-            return "#" + getName() + ": " + countDownIndex;
         }
     }
 }
-
-
